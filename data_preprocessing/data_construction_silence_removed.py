@@ -5,12 +5,14 @@ from scipy.io.wavfile import write
 import matplotlib.pyplot as plt
 import math
 import numpy as np
-# from config import config
 
+
+# /train-clean-100/481/123720/3_8.wav - 2.8000625
 
 def speaking_rate(transcript):
     """The function computes syllable based speaking rate 
     of an audio with given transcript
+
     transcript(str): transcript of the audio
     """
     vowels = ['a', 'e', 'i', 'o', 'u', 'y']
@@ -96,7 +98,6 @@ def chuncking_labeling(dir, chunck_length):
                             chunk_words = words[i_begin:i_end+1] 
 
                             transcript = ' '.join(chunk_words)
-                            print('transcripts: ', transcript)
 
                             speak_rate = speaking_rate(transcript)
                             print('sr:', speak_rate)
@@ -140,8 +141,7 @@ def chuncking_labeling(dir, chunck_length):
                                 filename += f'_{folder_file_title_count[filename]}'
                             filename += '.wav'
 
-                            sf.write(os.path.join(save_dir, filename), x, sr)
-                           
+                            # sf.write(os.path.join(save_dir, filename), x, sr)
                             print('transcripts: ', transcript)
                             print(f'exact chunck length: {exact_chunck_len}')
                             print(os.path.join(save_dir, filename)) 

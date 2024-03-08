@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def save(arr, xlabel, title, save_path):
     plt.figure()
-    plt.hist(arr)#, bins=10) # bins=int(max(arr))-int(min(arr))+1) # ,, color='blue', edgecolor='black')
+    plt.hist(arr) #, bins=10) # bins=int(max(arr))-int(min(arr))+1) # ,, color='blue', edgecolor='black')
     # Add labels and title
     plt.xlabel(xlabel)
     plt.title(title)
@@ -31,8 +31,8 @@ def stat(dir, save_dir, split):
     save(spr, 'speaking rate (#vowal)', f'{split} set speaking rate distribution', os.path.join(save_dir, f'{split}_sp_rate'))
 
     with open(os.path.join(save_dir,f'{split}.txt'), 'w') as file:
-        # Write some text into the file
-        file.write(f"max speaking rate({split}): {max(spr)}")
+        file.write(f"max speaking rate({split}): {max(spr)}\n")
+        file.write(f"number of audios ({split}): {len(lens)}")
 
 
 
