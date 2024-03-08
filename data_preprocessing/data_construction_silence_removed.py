@@ -42,7 +42,7 @@ def chuncking_labeling(dir, chunck_length):
         folder_file_title_count = {}
         df_word_trans = pd.read_csv(word_trans_file, delimiter='\t', header=None)
         for file in files:
-            if file[-5:] == '.flac': #[-5:] 908-31957-0025.
+            if file[-5:] == '.flac': 
                 signal, sr = sf.read(os.path.join(root, file))
                 for row in df_word_trans[0]:
                     if row.split(' ')[0] == file.split('.')[0]:
@@ -68,7 +68,6 @@ def chuncking_labeling(dir, chunck_length):
                                 for j in range(i+1, len(silence_removed_tms)):
                                     silence_removed_tms[j] -= sil_len
                         
-                        # print(silence_removed_tms)
                         i_begin = 0
                         while i_begin < len(words):
                             i_end = i_begin
@@ -142,7 +141,7 @@ def chuncking_labeling(dir, chunck_length):
                             filename += '.wav'
 
                             sf.write(os.path.join(save_dir, filename), x, sr)
-                            
+                           
                             print('transcripts: ', transcript)
                             print(f'exact chunck length: {exact_chunck_len}')
                             print(os.path.join(save_dir, filename)) 

@@ -30,6 +30,10 @@ def stat(dir, save_dir, split):
     save(lens, 'chunck length', f'{split} set chunk length distribution', os.path.join(save_dir, f'{split}_length'))
     save(spr, 'speaking rate (#vowal)', f'{split} set speaking rate distribution', os.path.join(save_dir, f'{split}_sp_rate'))
 
+    with open(os.path.join(save_dir,f'{split}.txt'), 'w') as file:
+        # Write some text into the file
+        file.write(f"max speaking rate({split}): {max(spr)}")
+
 
 
 if __name__ == '__main__':
@@ -41,6 +45,3 @@ if __name__ == '__main__':
     stat(val_dir, save_dir, 'val')
     stat(test_dir, save_dir, 'test')
     stat(train_dir, save_dir, 'train')
-
-
-
