@@ -1,6 +1,23 @@
 import os
 import soundfile as sf
 import matplotlib.pyplot as plt
+from collections import Counter
+
+
+def class_distr(sprs, prefix, folder):
+    """plots barplot of speaking rate classes and saves as a picture in the given folder"""
+    value_counts = Counter(sprs)
+    keys = value_counts.keys()
+    values =  value_counts.values()
+    plt.figure()
+    plt.bar(keys, values)
+    plt.xlabel('Sylable count')
+    plt.ylabel('Count')
+    plt.title(f"{prefix} classes distribution")
+    plt.xticks(ticks=range(len(keys)), labels=sorted(keys))
+    plt.tight_layout()
+    plt.savefig(os.path.join(folder, f'{prefix}_class_distr.png'))
+    print(value_counts) 
 
 
 def save(arr, xlabel, title, save_path):
@@ -29,6 +46,7 @@ def stat(dir, save_dir, split):
                 spr.append(int(file.split('.')[0].split('_')[0]))
     save(lens, 'chunck length', f'{split} set chunk length distribution', os.path.join(save_dir, f'{split}_length'))
     save(spr, 'speaking rate (#vowal)', f'{split} set speaking rate distribution', os.path.join(save_dir, f'{split}_sp_rate'))
+    class_distr(spr, split, save_dir)
 
     with open(os.path.join(save_dir,f'{split}.txt'), 'w') as file:
         file.write(f"max speaking rate({split}): {max(spr)}\n")
