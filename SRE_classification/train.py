@@ -29,7 +29,8 @@ class Train:
         self.model.compile(
             optimizer=optimizer,
             loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-            metrics=[tf.keras.metrics.SparseCategoricalAccuracy()] 
+            metrics=[tf.keras.metrics.SparseCategoricalAccuracy(),
+                     tf.keras.metrics.SparseTopKCategoricalAccuracy(k=3)] 
             )
         
         checkpoint_cb = WeightsSaver(self.model, self.checkpoint_dir)

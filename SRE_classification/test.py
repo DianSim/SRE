@@ -22,5 +22,16 @@ class Test:
             model = tf.keras.models.load_model(os.path.join(checkpoint_dir, latest_checkpoint))
             print(f"Loaded latest checkpoint: {latest_checkpoint}")
             model.evaluate(self.dataset)
+
+            y_true = []
+            y_pred = []
+            for x, y in self.dataset:
+                pred = np.argmax(model(x), axis=-1)
+                y_true += list(y.numpy())
+                y_pred += list(pred)
+            f1_scores = f1_score(y_true, y_pred, average=None)
+
+            for i, score in enumerate(f1_scores):
+                print(f'f1_score class_{i}: {score}')
         else:
             print(f"There's no saved checkpoint found in the {checkpoint_dir} dir.")
