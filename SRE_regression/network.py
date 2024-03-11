@@ -14,10 +14,9 @@ class My_Model(tf.keras.models.Model):
         # gave seq_len None to handle varibale length sequences
         input = layers.Input(shape=(None, 560))
         x = layers.LSTM(units=64, return_sequences=False)(input)
-        # x = layers.BatchNormalization()(x)
         x = layers.Dense(1)(x)
-        clipped_output = tf.clip_by_value(x, clip_value_min=0, clip_value_max=23) # change to Relu
-        self.model = models.Model(inputs=input, outputs=clipped_output)
+        output = layers.ReLU(max_value=24)(x)
+        self.model = models.Model(inputs=input, outputs=output)
 
     def call(self, x):
         return self.model(x)

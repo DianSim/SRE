@@ -3,27 +3,26 @@ from random import shuffle
 import tensorflow as tf
 import glob
 from config import config
-import statistics as stat
+import soundfile as sf
+
 
 
 class Preprocessing:
     def __init__(self):
         print('preprocessing instance creation started')
 
-        self.dir_val_clean = '/Users/dianasimonyan/Desktop/ASDS/Thesis/Implementation/datasets/LibriSpeechChuncked/dev-clean'
-        # self.dir_val_other = '/Users/dianasimonyan/Desktop/ASDS/Thesis/Implementation/datasets/LibriSpeechChuncked/dev-other'
-        self.dir_test_clean = '/Users/dianasimonyan/Desktop/ASDS/Thesis/Implementation/datasets/LibriSpeechChuncked/test-clean'
-        # self.dir_test_other = '/Users/dianasimonyan/Desktop/ASDS/Thesis/Implementation/datasets/LibriSpeechChuncked/test-other'
-        self.dir_train_clean = '/Users/dianasimonyan/Desktop/ASDS/Thesis/Implementation/datasets/LibriSpeechChuncked/train-clean-100'
+        self.dir_val_clean = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/LibriSpeechChuncked_v2/dev-clean'
+        self.dir_test_clean = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/LibriSpeechChuncked_v2/test-clean'
+        self.dir_train_clean = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/LibriSpeechChuncked_v2/train-clean-100'
         self.train_dataset = None
         self.val_dataset = None
         self.test_dataset = None
         
     def create_iterators(self):
-        val_clean_files = sorted(glob.glob(os.path.join(self.dir_val_clean, '**/*.wav'), recursive=True))
-        test_clean_files = sorted(glob.glob(os.path.join(self.dir_test_clean, '**/*.wav'), recursive=True))
-        train_clean_files = sorted(glob.glob(os.path.join(self.dir_train_clean, '**/*.wav'), recursive=True))[:100000]
-        shuffle(train_clean_files)
+        val_clean_files = glob.glob(os.path.join(self.dir_val_clean, '**/*.wav'), recursive=True)
+        test_clean_files = glob.glob(os.path.join(self.dir_test_clean, '**/*.wav'), recursive=True)
+        train_clean_files = sorted(glob.glob(os.path.join(self.dir_train_clean, '**/*.wav'), recursive=True))
+        # shuffle(train_clean_files)
         print('len(train_data)', len(train_clean_files))
         print('len(test_data)', len(test_clean_files))
         print('len(val_data)', len(val_clean_files))
@@ -31,7 +30,7 @@ class Preprocessing:
         # make tf dataset object
         self.train_dataset = self.make_tf_dataset_from_list(train_clean_files)
         self.val_dataset = self.make_tf_dataset_from_list(val_clean_files, is_validation = True)
-        self.test_dataset = self.make_tf_dataset_from_list(test_clean_files)
+        self.test_dataset = self.make_tf_dataset_from_list(test_clean_files, is_validation = True)
         return self.train_dataset, self.val_dataset, self.test_dataset
 
     def get_label(self, file_path):
@@ -56,7 +55,7 @@ class Preprocessing:
         dataset = dataset.map(self.map_get_waveform_and_label)
         dataset = dataset.cache()
         if not is_validation:
-            dataset = dataset.shuffle(buffer_size=len(filenames_list))
+            dataset = dataset.shuffle(buffer_size=len(filenames_list)//2)
         dataset = dataset.padded_batch(batch_size=config['train_params']['batch_size'], 
                                        padded_shapes=([None], [])).prefetch(tf.data.AUTOTUNE)
         dataset = dataset.map(lambda batch_wav, batch_label: (self.chunking(batch_wav), batch_label))
@@ -75,10 +74,14 @@ class Preprocessing:
         waveform = waveform/tf.math.reduce_std(waveform)
         return waveform, label 
 
-    def chunking(self, wav):
-        return tf.signal.frame(wav, frame_length=int(config['frame_length']*config['sample_rate']/1000), frame_step=int(config['window_shift']*config['sample_rate']/1000), pad_end=True)
+    def chunking(self, wav_batch):
+        return tf.signal.frame(wav_batch, frame_length=int(config['frame_length']*config['sample_rate']/1000), frame_step=int(config['window_shift']*config['sample_rate']/1000), pad_end=True)
 
 
 if __name__ == '__main__':
     p = Preprocessing()
-    p.create_iterators()
+    train, val, test = p.create_iterators()
+    for x in train:
+        print(x[0])
+        print(x[1])
+        break

@@ -15,33 +15,33 @@ class TensorboardCallback(tf.keras.callbacks.Callback):
         super(TensorboardCallback, self).__init__()
         self.log_dir = log_dir
         self.train_summary_writer = tf.summary.create_file_writer(os.path.join(log_dir, 'train'))
-        self.val_summary_writer = tf.summary.create_file_writer(os.path.join(log_dir, 'validation'))
+        self.val_summary_writer = tf.summary.create_file_writer(os.path.join(log_dir, 'test'))
 
     def on_epoch_end(self, epoch, logs=None):
         with self.train_summary_writer.as_default():
             tf.summary.scalar('loss', logs['loss'], step=epoch)
-            tf.summary.scalar('pearsons_correlation', logs['pearsons_correlation'], step=epoch) #reg
+            tf.summary.scalar('pearson_r', logs['pearson_r'], step=epoch) 
 
         with self.val_summary_writer.as_default():
             tf.summary.scalar('val_loss', logs['val_loss'], step=epoch)
-            tf.summary.scalar('val_pearsons_correlation', logs['val_pearsons_correlation'], step=epoch) #reg
+            tf.summary.scalar('val_pearson_r', logs['val_pearson_r'], step=epoch) #reg
 
 
 class WeightsSaver(tf.keras.callbacks.Callback):
     def __init__(self, model, checkpoint_dir):
         super(WeightsSaver, self).__init__()
         self.model = model
-        # self.optimizer = optimizer
         self.checkpoint_dir = checkpoint_dir
         self.save_frequency = config["train_params"]['latest_checkpoint_step']
         self.max_to_keep = config["train_params"]['max_checkpoints_to_keep']
-        self.checkpoint = tf.train.Checkpoint(model=self.model)
-        self.manager = tf.train.CheckpointManager(
-            self.checkpoint,
-            directory=self.checkpoint_dir, 
-            max_to_keep=self.max_to_keep,
-            step_counter=tf.Variable(self.save_frequency , trainable=False))
+        self.checkpoints = []
 
-    def on_train_batch_end(self, batch, logs=None):
-        if batch % self.save_frequency == 0:
-            self.manager.save()
+    def on_epoch_end(self, epoch, logs=None):
+        if epoch % self.save_frequency == 0:
+            checkpoint_path = os.path.join(self.checkpoint_dir, f'ckpt_{epoch}.keras')
+            self.model.save(checkpoint_path)
+
+            self.checkpoints.append(checkpoint_path)
+            if len(self.checkpoints) > self.max_to_keep:
+                oldest_checkpoint = self.checkpoints.pop(0)
+                os.remove(oldest_checkpoint)

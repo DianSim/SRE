@@ -2,9 +2,7 @@ import tensorflow as tf
 from callbacks import WeightsSaver , TensorboardCallback
 from config import config
 import os
-from scipy.stats import pearsonr
-import tensorflow_addons as tfa
-
+from custom_metrics import pearson_r
 
 config_train_params = config['train_params']
 
@@ -29,7 +27,7 @@ class Train:
         self.model.compile(
             optimizer=optimizer,
             loss=tf.keras.losses.MeanSquaredError(),
-            metrics=[tfa.metrics.PearsonsCorrelation()] 
+            metrics=[pearson_r]
             )
         
         checkpoint_cb = WeightsSaver(self.model, self.checkpoint_dir)
@@ -37,18 +35,18 @@ class Train:
         early_stopping_cb = tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                                                              patience=3,
                                                              restore_best_weights=True)
-
-        latest_checkpoint = tf.train.latest_checkpoint(self.checkpoint_dir)
-        if latest_checkpoint:
-            checkpoint = tf.train.Checkpoint(model=self.model)
-            checkpoint.restore(latest_checkpoint)
-            print(f"Loaded latest checkpoint: {latest_checkpoint}")
+        
+        files = os.listdir(self.checkpoint_dir)
+        if len(files) == 0:
+            print('No checkpoint found. Training from scratch...')
         else:
-            print("No checkpoint found. Training from scratch.")
+            latest_checkpoint= max(files, key=lambda f: os.path.getmtime(os.path.join(self.checkpoint_dir, f)))
+            self.model = tf.keras.models.load_model(os.path.join(self.checkpoint_dir, latest_checkpoint))
+            print(f"Loaded latest checkpoint: {latest_checkpoint}")
         
         history = self.model.fit(
             self.train_dataset,
             validation_data=self.dev_dataset,
             epochs=config_train_params['epochs'],
-            callbacks=[checkpoint_cb, tensorboard_cb, early_stopping_cb]
+            callbacks=[checkpoint_cb , tensorboard_cb, early_stopping_cb]
             )

@@ -5,7 +5,7 @@ config ={
     'window_shift': 10,
     'train_params': {
         'batch_size': 16,
-        'epochs':2,
+        'epochs':20,
         'steps_per_epoch': None,
         'latest_checkpoint_step': 1,
         'summary_step': 50, 
@@ -22,8 +22,5 @@ config ={
         'mfcc_lower_edge_hertz': 0.0,
         'mfcc_upper_edge_hertz': 8000.0,  
         'mfcc_num_mel_bins': 13
-    },
-    'data_proc':{
-        'silence': 30
     }
 }
