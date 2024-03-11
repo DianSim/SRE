@@ -50,12 +50,13 @@ def stat(dir, save_dir, split):
 
     with open(os.path.join(save_dir,f'{split}.txt'), 'w') as file:
         file.write(f"max speaking rate({split}): {max(spr)}\n")
-        file.write(f"number of audios ({split}): {len(lens)}")
-
+        file.write(f"number of audios ({split}): {len(lens)}\n")
+        file.write(f"max length ({split}): {max(lens)}\n")
+        file.write(f"min length ({split}): {min(lens)}\n")
 
 
 if __name__ == '__main__':
-    save_dir = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/Statitics/clean_LB_Speech_stat_v2'
+    save_dir = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/Statitics/clean_LB_Speech_stat_v2_truncated'
     val_dir = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/LibriSpeechChuncked_v2/dev-clean'
     test_dir = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/LibriSpeechChuncked_v2/test-clean'
     train_dir = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/LibriSpeechChuncked_v2/train-clean-100'
