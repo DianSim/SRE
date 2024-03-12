@@ -4,7 +4,6 @@ from tensorflow.keras import layers, models
 from config import config
 
 # (16, 139, 64)
-# config_model = config['model']
 config_model = config['model_name']
 
 
@@ -127,7 +126,6 @@ class MatchboxNet(keras.Model):
 
     def __init__(self, B, R, C, kernel_sizes=None, NUM_CLASSES=25, name="MatchboxNet"):
         super().__init__(name=name)
-          # BxTxFrBands
         if not kernel_sizes:
             kernel_sizes = [11+i*2 for i in range(1, B+1)]
 
@@ -151,7 +149,7 @@ class MatchboxNet(keras.Model):
     def call(self, x):
         # prologue block
         # print('Input Layer: ', x.shape)
-        x = self.prologue_conv1(x) # (16, 139, 64) => (16, 65, 128)
+        x = self.prologue_conv1(x) 
         x = self.prologue_bnorm1(x)
         x = layers.ReLU()(x)
         # print('prologue_conv1:', x.shape)

@@ -8,7 +8,7 @@ config ={
         'steps_per_epoch': None,
         'latest_checkpoint_step': 1,
         'summary_step': 50, 
-        'max_checkpoints_to_keep': 5,
+        'max_checkpoints_to_keep': 11,
     },
     'feature': {
         'window_size_ms': 25, 

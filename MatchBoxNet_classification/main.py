@@ -26,5 +26,14 @@ if train_bool:
     train_instance.train()  #trains the model
 else:
     print('test.......')
-    test_obj = Test(network, test_dataset)
+    print('Test data evaluation')
+    test_obj = Test(test_dataset)
     test_obj.test() #tests the model
+
+    print('Val data evaluation')
+    test_obj = Test(val_dataset)
+    test_obj.test() 
+
+    print('Train data evaluation')
+    test_obj = Test(train_dataset)
+    test_obj.test() 

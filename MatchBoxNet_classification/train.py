@@ -25,7 +25,8 @@ class Train:
         os.makedirs(self.summary_test, exist_ok=True)
 
     def train(self):
-        optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=1e-3)
+        optimizer = tf.keras.optimizers.legacy.Adam(learning_rate=0.05)
+        # optimizer = tfa.optimizers.NovoGrad(beta_1=0.95, beta_2=0.5)
         self.model.compile(
             optimizer=optimizer,
             loss=tf.keras.losses.SparseCategoricalCrossentropy(),
@@ -33,10 +34,12 @@ class Train:
                      tf.keras.metrics.SparseTopKCategoricalAccuracy(k=3)] 
             )
         
+        reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2,
+                            patience=3, min_lr=0.001)
         checkpoint_cb = WeightsSaver(self.model, self.checkpoint_dir)
         tensorboard_cb = TensorboardCallback(self.summary_dir)
         early_stopping_cb = tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
-                                                             patience=3,
+                                                             patience=10,
                                                              restore_best_weights=True)
         
         files = os.listdir(self.checkpoint_dir)
@@ -51,5 +54,5 @@ class Train:
             self.train_dataset,
             validation_data=self.dev_dataset,
             epochs=config_train_params['epochs'],
-            callbacks=[checkpoint_cb , tensorboard_cb, early_stopping_cb]
+            callbacks=[checkpoint_cb , tensorboard_cb, early_stopping_cb, reduce_lr]
             )

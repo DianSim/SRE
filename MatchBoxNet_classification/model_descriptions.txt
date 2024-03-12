@@ -1,0 +1,7 @@
+1. 'MatchBox_3x2x64' 
+    MatchBoxNet(B=3, R=2, C=64)
+    optimizer - Adam(learning_rate=1e-3)
+    EarlyStopping (patience=10)
+2.'MatchBox_3x2x64_200epoch' - the same without EarlyStopping
+
+                    
