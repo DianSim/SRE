@@ -18,7 +18,8 @@ class Test:
 
         files = os.listdir(checkpoint_dir)
         if len(files):
-            latest_checkpoint= max(files, key=lambda f: os.path.getmtime(os.path.join(checkpoint_dir, f)))
+            # latest_checkpoint= max(files, key=lambda f: os.path.getmtime(os.path.join(checkpoint_dir, f)))
+            latest_checkpoint = 'ckpt_6.keras'
             model = tf.keras.models.load_model(os.path.join(checkpoint_dir, latest_checkpoint))
             print(f"Loaded latest checkpoint: {latest_checkpoint}")
             model.evaluate(self.dataset)

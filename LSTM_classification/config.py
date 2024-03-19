@@ -1,15 +1,15 @@
 config ={
-    'model_name': 'LSTM128_dense25',
+    'model_name': 'LSTM128_dense25_noise_augm',
     'sample_rate': 16000,
     'frame_length': 35,
     'window_shift': 10,
     'train_params': {
-        'batch_size': 16,
-        'epochs':20,
+        'batch_size': 64,
+        'epochs':200,
         'steps_per_epoch': None,
         'latest_checkpoint_step': 1,
         'summary_step': 50, 
-        'max_checkpoints_to_keep': 5,
+        'max_checkpoints_to_keep': 8,
     },
     'model_params':{
         'f_n': 8,
